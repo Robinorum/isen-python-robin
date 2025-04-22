@@ -1,4 +1,4 @@
-name: Docker and Trivy and Sbom
+name: Docker and Trivy
 
 on: push
 
