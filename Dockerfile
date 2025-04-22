@@ -3,7 +3,7 @@
 FROM python:3.9-slim-buster
 
 
-RUN groupadd -r robin && useradd -r -g robin robin
+RUN useradd -r robin
 USER robin
 
 WORKDIR /app
