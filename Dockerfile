@@ -1,12 +1,12 @@
 # hadolint global ignore=DL3008
 FROM debian:12-slim AS build 
 
-# Installation avec versions épinglées
+# Installation des dépendances nécessaires
 RUN apt-get update && \
     apt-get install --no-install-suggests --no-install-recommends --yes \
-    python3-venv=3.11.2-1 \
-    gcc=4:12.2.0-3 \
-    libpython3-dev=3.11.2-1+b1 && \
+    python3-venv \
+    gcc \
+    libpython3-dev && \
     python3 -m venv /venv && \
     # clean apt cache to reduce image size
     apt-get clean && \
