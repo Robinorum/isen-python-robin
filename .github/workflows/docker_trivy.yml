@@ -51,3 +51,21 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+
+
+
+  sbom:
+    needs: build-and-push
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Scan the image and upload dependency results
+      uses: anchore/sbom-action@bb716408e75840bbb01e839347cd213767269d4a
+      with:
+        image: "robounce/isen-python:latest"
+        artifact-name: image.spdx.json
+        dependency-snapshot: true
