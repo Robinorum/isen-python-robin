@@ -69,3 +69,13 @@ jobs:
             source: dir:.
             format: syft-json
             output-file: sbom.syft.json
+
+
+        - name: Upload SBOM files
+          uses: actions/upload-artifact@v3
+          with:
+            name: sbom-files
+            path: |
+              sbom.syft.json
+              sbom.cyclonedx.json
+            retention-days: 90
