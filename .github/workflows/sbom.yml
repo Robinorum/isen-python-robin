@@ -15,7 +15,7 @@ jobs:
         - name: Generate SBOM from project directory
           uses: anchore/sbom-action@v0
           with:
-            source: dir:.
+            path : .
             format: syft-json
             output-file: sbom.syft.json
 
@@ -32,7 +32,7 @@ jobs:
       - name: Download SBOM artifact
         uses: actions/download-artifact@v4
         with:
-          name: sbom.syft.json
+          name: isen-python-robin-sbom.syft-json
           path: ./sbom
 
       - name: Install Grype
@@ -41,8 +41,8 @@ jobs:
 
       - name: Run Grype scan on SBOM
         run: |
-          grype sbom:./sbom/sbom.syft.json -o table > grype-report.txt
-          grype sbom:./sbom/sbom.syft.json -o sarif > grype-report.sarif
+          grype sbom:./sbom/isen-python-robin-sbom.syft-json -o table > grype-report.txt
+          grype sbom:./sbom/isen-python-robin-sbom.syft-json -o sarif > grype-report.sarif
 
       - name: Upload Grype report
         uses: actions/upload-artifact@v4
