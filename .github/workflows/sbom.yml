@@ -19,15 +19,6 @@ jobs:
             format: syft-json
             output-file: sbom.syft.json
 
-        - name: Upload SBOM files
-          uses: actions/upload-artifact@v4
-          with:
-            name: sbom-files
-            path: |
-              sbom.syft.json
-              sbom.cyclonedx.json
-            retention-days: 90
-
 
   sbom-scan:
     name: Scan SBOM with Grype
@@ -41,7 +32,7 @@ jobs:
       - name: Download SBOM artifact
         uses: actions/download-artifact@v4
         with:
-          name: sbom-files
+          name: isen-python-robin-sbom.syft-json
           path: ./sbom
 
       - name: Install Grype
@@ -50,8 +41,8 @@ jobs:
 
       - name: Run Grype scan on SBOM
         run: |
-          grype sbom:./sbom/sbom.syft.json -o table > grype-report.txt
-          grype sbom:./sbom/sbom.syft.json -o sarif > grype-report.sarif
+          grype sbom:./sbom/isen-python-robin-sbom.syft.json -o table > grype-report.txt
+          grype sbom:./sbom/isen-python-robin-sbom.syft.json -o sarif > grype-report.sarif
 
       - name: Upload Grype report
         uses: actions/upload-artifact@v4

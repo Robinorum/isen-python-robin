@@ -1,18 +1,21 @@
 name: Bandit
 
-on : [push, pull_request]
+on: [push, pull_request]
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
     permissions:
-      # required for all workflows
       security-events: write
-      # only required for workflows in private repositories
       actions: read
       contents: read
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
       - name: Perform Bandit Analysis
         uses: PyCQA/bandit-action@v1
         with:
-            exclude: "integration_tests/*,unit_tests/*"
+          exclude: "integration_tests/*,unit_tests/*"
