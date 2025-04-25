@@ -3,7 +3,9 @@ from django.urls import reverse
 import pytest
 
 from products.models import Product
-from home.views import HomeView
+
+
+# pylint: disable=no-member
 
 
 @pytest.mark.django_db
