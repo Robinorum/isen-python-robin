@@ -78,6 +78,20 @@
 
       <!-- Portfolio Grid Items-->
       <div class="row justify-content-center">
+        {% if object_list %}
+          {% for product in object_list %}
+          <div class="col-md-6 col-lg-4 mb-5">
+            <!-- Carte produit (inchangée) -->
+            ...
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-12 text-center">
+            <p style="color: red; font-weight: bold;">Aucun produit ne correspond à votre recherche.</p>
+          </div>
+        {% endif %}
+      </div>
+
         {% for product in object_list %}
         <div class="col-md-6 col-lg-4 mb-5">
           <div class="portfolio-item mx-auto">

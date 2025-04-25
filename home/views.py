@@ -1,6 +1,5 @@
 from django.shortcuts import redirect
 from django.views.generic import ListView
-
 from products.models import Product
 
 
@@ -9,6 +8,7 @@ def RedirectHomeView(request):
     Redirect url from '/' to '/home/'
     '''
     return redirect('home')
+
 
 class HomeView(ListView):
     '''
@@ -19,22 +19,19 @@ class HomeView(ListView):
 
     def get_queryset(self):
         queryset = Product.objects.all()
-        
-        min_price = self.request.GET.get('min_price')
-        max_price = self.request.GET.get('max_price')
-        
-        if min_price:
-            try:
-                min_price = float(min_price)
-                queryset = queryset.filter(price__gte=min_price)
-            except ValueError:
-                pass
-                
-        if max_price:
-            try:
-                max_price = float(max_price)
-                queryset = queryset.filter(price__lte=max_price)
-            except ValueError:
-                pass
-                
+
+        min_price = self._parse_price(self.request.GET.get('min_price'))
+        max_price = self._parse_price(self.request.GET.get('max_price'))
+
+        if min_price is not None:
+            queryset = queryset.filter(price__gte=min_price)
+        if max_price is not None:
+            queryset = queryset.filter(price__lte=max_price)
+
         return queryset
+
+    def _parse_price(self, value):
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
