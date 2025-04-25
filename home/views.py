@@ -17,5 +17,24 @@ class HomeView(ListView):
     template_name = 'home.html'
     model = Product
 
-    def get(self, request):
-        return super().get(request)
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        
+        min_price = self.request.GET.get('min_price')
+        max_price = self.request.GET.get('max_price')
+        
+        if min_price:
+            try:
+                min_price = float(min_price)
+                queryset = queryset.filter(price__gte=min_price)
+            except ValueError:
+                pass
+                
+        if max_price:
+            try:
+                max_price = float(max_price)
+                queryset = queryset.filter(price__lte=max_price)
+            except ValueError:
+                pass
+                
+        return queryset
