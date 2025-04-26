@@ -1,31 +1,24 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
   <header class="masthead bg-primary text-white text-center">
     <div class="container d-flex align-items-center flex-column">
-      <!-- Masthead Avatar Image--><img
-        class="masthead-avatar mb-5"
-        src="assets/img/avataaars.svg"
-        alt=""
-      />
-      <!-- Masthead Heading-->
+      <img class="masthead-avatar mb-5" src="assets/img/avataaars.svg" alt="" />
       <h1 class="masthead-heading mb-0">OC-COMMERCE</h1>
-      <!-- Icon Divider-->
       <div class="divider-custom divider-light">
         <div class="divider-custom-line"></div>
         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
         <div class="divider-custom-line"></div>
       </div>
-      <!-- Masthead Subheading-->
     </div>
   </header>
+
   <section class="page-section portfolio" id="portfolio">
     <div class="container">
-      <!-- Portfolio Section Heading-->
       <div class="text-center">
-        <h2 class="page-section-heading text-secondary mb-0 d-inline-block">
-          PRODUCTS
-        </h2>
+        <h2 class="page-section-heading text-secondary mb-0 d-inline-block">PRODUCTS</h2>
       </div>
-      <!-- Icon Divider-->
+
       <div class="divider-custom">
         <div class="divider-custom-line"></div>
         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
@@ -44,22 +37,22 @@
                     <div class="input-group-prepend">
                       <div class="input-group-text">$</div>
                     </div>
-                    <input type="number" step="0.01" min="0" class="form-control" id="min_price" name="min_price" 
-                          placeholder="Min" value="{{ request.GET.min_price }}">
+                    <input type="number" step="0.01" min="0" class="form-control" id="min_price" name="min_price"
+                           placeholder="Min" value="{{ request.GET.min_price }}">
                   </div>
                 </div>
-                
+
                 <div class="col-auto">
                   <label for="max_price">Prix maximum</label>
                   <div class="input-group mb-2">
                     <div class="input-group-prepend">
                       <div class="input-group-text">$</div>
                     </div>
-                    <input type="number" step="0.01" min="0" class="form-control" id="max_price" name="max_price" 
-                          placeholder="Max" value="{{ request.GET.max_price }}">
+                    <input type="number" step="0.01" min="0" class="form-control" id="max_price" name="max_price"
+                           placeholder="Max" value="{{ request.GET.max_price }}">
                   </div>
                 </div>
-                
+
                 <div class="col-auto align-self-end mb-2">
                   <button type="submit" class="btn btn-primary">Filtrer</button>
                   {% if request.GET.min_price or request.GET.max_price %}
@@ -71,18 +64,33 @@
           </div>
         </div>
       </div>
-      
 
-
-
-
-      <!-- Portfolio Grid Items-->
+      <!-- Produits -->
       <div class="row justify-content-center">
         {% if object_list %}
           {% for product in object_list %}
           <div class="col-md-6 col-lg-4 mb-5">
-            <!-- Carte produit (inchangée) -->
-            ...
+            <div class="portfolio-item mx-auto">
+              <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
+                <div class="portfolio-item-caption-content text-center text-white">
+                  <i class="fas fa-info-circle fa-3x" data-toggle="modal" data-target="#portfolioModal{{product.id}}"></i>
+                  <br />
+                  {% if user.is_authenticated %}
+                    <hr style="border: 2px solid white" />
+                    {% if product.is_favourite %}
+                      <a onclick="markFavourite('{{product.id}}')" data="{{product.id}}" id="favBtn{{product.id}}" style="color:red;">
+                    {% else %}
+                      <a onclick="markFavourite('{{product.id}}', false)" data="{{product.id}}" id="favBtn{{product.id}}">
+                    {% endif %}
+                      <i class="fas fa-heart fa-3x"></i>
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+              <h4 style="text-align: center; color: darkblue">{{ product.name|title }}</h4>
+              <img class="img-fluid" src="{% get_media_prefix %}{{product.image}}" alt="{{ product.name }}" />
+              <h6 style="text-align: center">$ {{ product.price }}</h6>
+            </div>
           </div>
           {% endfor %}
         {% else %}
@@ -91,111 +99,32 @@
           </div>
         {% endif %}
       </div>
-
-        {% for product in object_list %}
-        <div class="col-md-6 col-lg-4 mb-5">
-          <div class="portfolio-item mx-auto">
-            <div
-              class="
-                portfolio-item-caption
-                d-flex
-                align-items-center
-                justify-content-center
-                h-100
-                w-100
-              "
-            >
-              <div
-                class="portfolio-item-caption-content text-center text-white"
-              >
-                <i
-                  class="fas fa-info-circle fa-3x"
-                  data-toggle="modal"
-                  data-target="#portfolioModal{{product.id}}"
-                ></i>
-                <br />
-                {% if user.is_authenticated %}
-                <hr style="border: 2px solid white" />
-                {% if product.is_favourite %}
-                  <a
-                    onclick="markFavourite('{{product.id}}')"
-                    data="{{product.id}}"
-                    id="favBtn{{product.id}}" style="color:red;"
-                  >
-                {% endif %}
-                {% if not product.is_favourite %}
-                  <a
-                    onclick="markFavourite('{{product.id}}', false)"
-                    data="{{product.id}}"
-                    id="favBtn{{product.id}}"
-                  >
-                {% endif %}
-                  <i class="fas fa-heart fa-3x"></i>
-                </a>
-                {% endif %}
-              </div>
-            </div>
-            <h4 style="text-align: center; color: darkblue">
-              {{ product.name|title }}
-            </h4>
-            <img
-              class="img-fluid"
-              src="{% get_media_prefix %}{{product.image}}"
-              alt="{{ product.name }}"
-            />
-            <h6 style="text-align: center">$ {{ product.price }}</h6>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
     </div>
   </section>
-  <!-- Portfolio Modal-->
+
+  <!-- Modals -->
   {% for product in object_list %}
-  <div
-    class="portfolio-modal modal fade"
-    id="portfolioModal{{product.id}}"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="#portfolioModal0Label"
-    aria-hidden="true"
-  >
+  <div class="portfolio-modal modal fade" id="portfolioModal{{product.id}}" tabindex="-1" role="dialog" aria-labelledby="#portfolioModal0Label" aria-hidden="true">
     <div class="modal-dialog modal-l" role="document">
       <div class="modal-content">
-        <button
-          class="close"
-          type="button"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true"><i class="fas fa-times"></i></span>
         </button>
         <div class="modal-body text-center">
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-lg-8">
-                <!-- Portfolio Modal - Title-->
-                <h2 class="portfolio-modal-title text-secondary mb-0">
-                  {{ product.name|title }}
-                </h2>
-                <!-- Icon Divider-->
+                <h2 class="portfolio-modal-title text-secondary mb-0">{{ product.name|title }}</h2>
                 <div class="divider-custom">
                   <div class="divider-custom-line"></div>
-                  <div class="divider-custom-icon">
-                    <i class="fas fa-star"></i>
-                  </div>
+                  <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
                   <div class="divider-custom-line"></div>
                 </div>
-                <!-- Portfolio Modal - Image--><img
-                  class="img-fluid rounded mb-5"
-                  src="{% get_media_prefix %}{{product.image}}"
-                  alt="{{product.image}}"
-                />
-                <!-- Portfolio Modal - Text-->
+                <img class="img-fluid rounded mb-5" src="{% get_media_prefix %}{{product.image}}" alt="{{product.image}}" />
                 <h6>Description</h6>
-                <p class="mb-3">{{ product.description}}</p>
+                <p class="mb-3">{{ product.description }}</p>
                 <h6>Price</h6>
-                <p class="mb-1">$ {{ product.price}}</p>
+                <p class="mb-1">$ {{ product.price }}</p>
               </div>
             </div>
           </div>
@@ -204,19 +133,18 @@
     </div>
   </div>
   {% endfor %}
+
+  <!-- About Section -->
   <section class="page-section bg-primary text-white mb-0" id="about">
     <div class="container">
-      <!-- About Section Heading-->
       <div class="text-center">
         <h2 class="page-section-heading d-inline-block text-white">ABOUT</h2>
       </div>
-      <!-- Icon Divider-->
       <div class="divider-custom divider-light">
         <div class="divider-custom-line"></div>
         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
         <div class="divider-custom-line"></div>
       </div>
-      <!-- About Section Content-->
       <div class="row">
         <div class="col-lg-4 ml-auto">
           <p class="pre-wrap lead">
@@ -231,27 +159,22 @@
       </div>
     </div>
   </section>
+
+  <!-- Contact Section -->
   <section class="page-section" id="contact">
     <div class="container">
-      <!-- Contact Section Heading-->
       <div class="text-center">
-        <h2 class="page-section-heading text-secondary d-inline-block mb-0">
-          CONTACT
-        </h2>
+        <h2 class="page-section-heading text-secondary d-inline-block mb-0">CONTACT</h2>
       </div>
-      <!-- Icon Divider-->
       <div class="divider-custom">
         <div class="divider-custom-line"></div>
         <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
         <div class="divider-custom-line"></div>
       </div>
-      <!-- Contact Section Content-->
       <div class="row justify-content-center">
         <div class="col-lg-4">
           <div class="d-flex flex-column align-items-center">
-            <div class="icon-contact mb-3">
-              <i class="fas fa-mobile-alt"></i>
-            </div>
+            <div class="icon-contact mb-3"><i class="fas fa-mobile-alt"></i></div>
             <div class="text-muted">Phone</div>
             <div class="lead font-weight-bold">(555) 555-5555</div>
           </div>
@@ -260,13 +183,10 @@
           <div class="d-flex flex-column align-items-center">
             <div class="icon-contact mb-3"><i class="far fa-envelope"></i></div>
             <div class="text-muted">Email</div>
-            <a class="lead font-weight-bold" href="mailto:name@example.com"
-              >name@example.com</a
-            >
+            <a class="lead font-weight-bold" href="mailto:name@example.com">name@example.com</a>
           </div>
         </div>
       </div>
     </div>
   </section>
-  {% endblock %}
-</div>
+{% endblock %}
