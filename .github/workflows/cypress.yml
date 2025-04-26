@@ -11,16 +11,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v3
-        with:
-            python-version: "3.9"
 
-      - name: Start Python server
+      - name: Install Python
         run: |
-          pip install -r requirements.txt
-          python manage.py runserver 0.0.0.0:8080 &
-          sleep 5  # attendre que le serveur démarre
+          apt-get update
+          apt-get install -y python3 python3-pip
+
+      - name: Install dependencies and start server
+        run: |
+          pip3 install -r requirements.txt
+          python3 manage.py runserver 0.0.0.0:8080 &
+          sleep 5
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
