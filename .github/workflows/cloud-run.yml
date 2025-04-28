@@ -10,9 +10,8 @@ on:
 
 env:
   REGION: europe-west1
-  PROJECT_ID: 688932068099
   DOCKER_IMAGE: robounce/isen-python:dev-${{ github.sha }}
-  GCP_IMAGE: europe-west1-docker.pkg.dev/isen-python-458207/isen-python-robin-app/isen-python
+  GCP_IMAGE: europe-west1-docker.pkg.dev/isen-python-458207/isen-python-robin-app
 
 jobs:
   deploy:
@@ -50,13 +49,11 @@ jobs:
     - name: Push image to Artifact Registry
       run: |
         docker push $GCP_IMAGE
-
+ 
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: isen-python-service
-        image: europe-west1-docker.pkg.dev/isen-python-458207/isen-python-robin-app/isen-python
-        region: europe-west1
-        flags: |
-            --allow-unauthenticated
-            --timeout 900s
+        image: ${{ env.GCP_IMAGE }}
+        region: ${{ env.REGION }}
+        allow-unauthenticated: true

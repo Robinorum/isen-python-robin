@@ -29,8 +29,6 @@ WORKDIR /app
 
 COPY . .
 
-# EXPOSE 8080
-ENV PORT 8080 # Définit une valeur par défaut
+EXPOSE 8080
 
-# Utilise la forme shell pour permettre l'expansion de $PORT
-CMD /venv/bin/python manage.py runserver 0.0.0.0:$PORT
+CMD ["/venv/bin/python", "manage.py", "runserver", "0.0.0.0:8080"]
