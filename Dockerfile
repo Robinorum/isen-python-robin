@@ -3,6 +3,8 @@ FROM debian:12-slim AS build
 
 ENV LANG C.UTF-8
 
+ENV PORT 8080
+
 # Installation des dépendances nécessaires
 RUN apt-get update && \
     apt-get install --no-install-suggests --no-install-recommends --yes \
@@ -27,9 +29,8 @@ WORKDIR /app
 
 COPY . .
 
-EXPOSE 8080
+# EXPOSE 8080
+ENV PORT 8080 # Définit une valeur par défaut
 
-ENV PORT 8080
-
-# Utilisation de Gunicorn pour servir l'application Django
-CMD ["/venv/bin/gunicorn", "isen_python.wsgi:application", "--bind", "0.0.0.0:8080"]
+# Utilise la forme shell pour permettre l'expansion de $PORT
+CMD /venv/bin/python manage.py runserver 0.0.0.0:$PORT
