@@ -1,4 +1,4 @@
-name: DAST Scan with ZAP
+name: ZAP Baseline DAST Scan
 
 on:
   push:
@@ -6,39 +6,31 @@ on:
       - main
 
 jobs:
-  dast-scan:
-    name: Run DAST with ZAP
+  zap-scan:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python environment
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Install dependencies
+      - name: Build and run app in Docker
         run: |
-          python -m venv venv  # Créer un environnement virtuel
-          source venv/bin/activate  # Activer l'environnement virtuel
-          pip install --upgrade pip  # Mettre à jour pip
-          pip install -r requirements.txt  # Installer les dépendances, incluant Django
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }} .
+          docker run -d -it -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }} 
+          sleep 10   
 
-      - name: Start application (Assuming Flask, Django, etc. with port 8080)
-        run: |
-          source venv/bin/activate  # Réactiver l'environnement virtuel dans le bon contexte
-          python manage.py runserver 0.0.0.0:8080 &  # Lancer l'application Django en arrière-plan
-          sleep 30  # Attendre 30 secondes pour être sûr que l'application est lancée
-
-      - name: Run ZAP Baseline
-        uses: zaproxy/action-baseline@v0.10.0
+      - name: Run ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.14.0
         with:
-          target: 'http://localhost:8080'
-          cmd_options: '-t 60 -J zap-report.json -w report_md.md -r report_html.html -config api.disablekey=true'
-
-      - name: Upload ZAP Report
+            target: 'http://localhost:8080'
+            fail_action: false
+  
+      - name: Upload ZAP Reports
         uses: actions/upload-artifact@v4
         with:
-          name: zap-scan-report
-          path: zap-report.json
+            name: zap-report
+            path: |
+              zap_report.json
