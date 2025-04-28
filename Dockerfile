@@ -1,6 +1,8 @@
 # hadolint global ignore=DL3008
 FROM debian:12-slim AS build 
 
+ENV LANG C.UTF-8
+
 # Installation des dépendances nécessaires
 RUN apt-get update && \
     apt-get install --no-install-suggests --no-install-recommends --yes \
@@ -11,6 +13,7 @@ RUN apt-get update && \
     # clean apt cache to reduce image size
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
 
 FROM build AS build-venv
 
