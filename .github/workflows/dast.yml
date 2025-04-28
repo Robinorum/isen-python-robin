@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
@@ -33,7 +33,7 @@ jobs:
         uses: zaproxy/action-baseline@v0.10.0
         with:
           target: 'http://localhost:8080/home'
-          cmd_options: '-t 60 -J zap-report.json -config api.disablekey=true'
+          cmd_options: '-t 60 -J zap-report.json -w report_md.md -r report_html.html -config api.disablekey=true'
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
