@@ -59,5 +59,4 @@ jobs:
         region: europe-west1
         flags: |
         --allow-unauthenticated
-        --update-labels managed-by=github-actions,commit-sha=${{ github.sha }}
         --timeout 900s
