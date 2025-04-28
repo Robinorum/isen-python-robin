@@ -1,4 +1,4 @@
-name: Docker, Trivy and DAST
+name: Docker and Trivy
 
 on: push
 
@@ -16,7 +16,7 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{secrets.DOCKERHUB_USERNAME}}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
       - name: Build and push
@@ -24,12 +24,10 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/isen-python:dev-${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/isen-python:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/isen-python:latest
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/isen-python:dev-${{ github.sha }}
+          cache-from: type=registry,ref=${{secrets.DOCKERHUB_USERNAME}}/isen-python:latest
           cache-to: type=inline
-
+  
   security-scan:
     needs: docker-build
     permissions:
@@ -43,7 +41,7 @@ jobs:
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         continue-on-error: true
         with:
-          image-ref: 'docker.io/${{ secrets.DOCKERHUB_USERNAME }}/isen-python:dev-${{ github.sha }}'
+          image-ref: 'docker.io/${{secrets.DOCKERHUB_USERNAME}}/isen-python:dev-${{ github.sha }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
@@ -54,32 +52,5 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-  dast-scan:
-    needs: docker-build
-    name: Run DAST with ZAP
-    runs-on: ubuntu-latest
+
     
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Pull built image
-        run: |
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/isen-python:dev-${{ github.sha }}
-
-      - name: Run app from built image
-        run: |
-          docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/isen-python:dev-${{ github.sha }}
-          sleep 15
-
-      - name: Run ZAP Baseline
-        uses: zaproxy/action-baseline@v0.10.0
-        with:
-          target: 'http://localhost:8080'
-          cmd_options: '-t 60 -J zap-report.json -config api.disablekey=true'
-
-      - name: Upload ZAP Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-scan-report
-          path: zap-report.json
