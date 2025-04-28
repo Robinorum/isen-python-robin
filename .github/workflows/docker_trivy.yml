@@ -39,13 +39,13 @@ jobs:
     steps:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
+        continue-on-error: true
         with:
           image-ref: 'docker.io/${{secrets.DOCKERHUB_USERNAME}}/isen-python:dev-${{ github.sha }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-          continue-on-error: true
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3

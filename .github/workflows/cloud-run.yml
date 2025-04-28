@@ -56,4 +56,5 @@ jobs:
         service: isen-python-service
         image: ${{ env.GCP_IMAGE }}
         region: ${{ env.REGION }}
-        allow-unauthenticated: true
+        flags: --allow-unauthenticated
+      
