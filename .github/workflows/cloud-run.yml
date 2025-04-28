@@ -11,7 +11,7 @@ on:
 env:
   REGION: europe-west1
   DOCKER_IMAGE: robounce/isen-python:dev-${{ github.sha }}
-  GCP_IMAGE: europe-west1-docker.pkg.dev/isen-python-458207/isen-python-robin-app
+  GCP_IMAGE: europe-west1-docker.pkg.dev/isen-python-458207/isen-python-robin-app/isen-python
 
 jobs:
   deploy:
