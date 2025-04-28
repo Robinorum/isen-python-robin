@@ -1,0 +1,32 @@
+name: DAST Scan with ZAP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  dast-scan:
+    name: Run ZAP Baseline Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run application with Docker
+      run: |
+        docker run -d -p 8080:8080 europe-west1-docker.pkg.dev/isen-python-458207/isen-python-robin-app/isen-python
+        sleep 15 # Laisse à l'application le temps de démarrer
+
+    - name: ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.10.0
+      with:
+        target: 'http://localhost:8080'
+        cmd_options: '-t 60 -J zap-report.json -config api.disablekey=true -config scanner.attackStrength=LOW'
+
+    - name: Upload ZAP Scan Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: zap-scan-report
+        path: zap-report.json

@@ -1,4 +1,4 @@
-name: Deploy to Cloud Run
+name: Cloud Run Deployment
 
 on:
   workflow_run:
@@ -28,7 +28,7 @@ jobs:
       with:
         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
-    - name: Authenticate Docker to Artifact Registry
+    - name: Authenticate
       run: |
         gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
 
@@ -38,19 +38,19 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Pull image from Docker Hub
+    - name: Pull
       run: |
         docker pull $DOCKER_IMAGE
 
-    - name: Tag image for Artifact Registry
+    - name: Tag
       run: |
         docker tag $DOCKER_IMAGE $GCP_IMAGE
 
-    - name: Push image to Artifact Registry
+    - name: Push
       run: |
         docker push $GCP_IMAGE
  
-    - name: Deploy to Cloud Run
+    - name: Deploy
       uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: isen-python-service
