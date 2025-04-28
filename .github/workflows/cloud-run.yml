@@ -58,5 +58,5 @@ jobs:
         image: europe-west1-docker.pkg.dev/isen-python-458207/isen-python-robin-app/isen-python
         region: europe-west1
         flags: |
-        --allow-unauthenticated
-        --timeout 900s
+            --allow-unauthenticated
+            --timeout 900s
