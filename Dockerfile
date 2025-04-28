@@ -29,4 +29,7 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["/venv/bin/python", "manage.py", "runserver", "0.0.0.0:8080"]
+ENV PORT 8080
+
+# Utilisation de Gunicorn pour servir l'application Django
+CMD ["/venv/bin/gunicorn", "isen_python.wsgi:application", "--bind", "0.0.0.0:8080"]
