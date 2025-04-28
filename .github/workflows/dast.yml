@@ -16,18 +16,20 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
+          python -m venv venv  # Créer un environnement virtuel
+          source venv/bin/activate  # Activer l'environnement virtuel
+          pip install --upgrade pip  # Mettre à jour pip
+          pip install -r requirements.txt  # Installer les dépendances, incluant Django
 
       - name: Start application (Assuming Flask, Django, etc. with port 8080)
         run: |
-          python manage.py runserver 0.0.0.0:8080 &
-          sleep 10  # Wait for the server to start
+          source venv/bin/activate  # Réactiver l'environnement virtuel dans le bon contexte
+          python manage.py runserver 0.0.0.0:8080 &  # Lancer l'application Django en arrière-plan
+          sleep 30  # Attendre 30 secondes pour être sûr que l'application est lancée
 
       - name: Run ZAP Baseline
         uses: zaproxy/action-baseline@v0.10.0
