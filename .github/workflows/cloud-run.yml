@@ -50,11 +50,11 @@ jobs:
     - name: Push image to Artifact Registry
       run: |
         docker push $GCP_IMAGE
- 
+
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v2
       with:
         service: isen-python-service
         image: europe-west1-docker.pkg.dev/isen-python-458207/isen-python-robin-app/isen-python
         region: europe-west1
-        flags: --allow-unauthenticated --update-labels,managed-by=github-actions,commit-sha=${{ github.sha }}
+        flags: --allow-unauthenticated  # Retirer --update-labels ici
